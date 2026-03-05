@@ -1,296 +1,178 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>فتح حساب</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فتح حساب</title>
 
-  <!-- خط عربي جميل -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <style>
-    :root{
-      --bg1:#0ea5e9;
-      --bg2:#22c55e;
-      --card:#0b1220cc;
-      --text:#f8fafc;
-      --muted:#cbd5e1;
-      --accent:#38bdf8;
-      --accent2:#22c55e;
-      --danger:#ef4444;
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --radius: 22px;
-    }
+<style>
 
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family:"Cairo", system-ui, -apple-system, Segoe UI, Arial;
-      min-height:100vh;
-      color:var(--text);
+:root{
+--bg1:#0ea5e9;
+--bg2:#22c55e;
+--card:#0b1220cc;
+--text:#f8fafc;
+--muted:#cbd5e1;
+--shadow:0 20px 60px rgba(0,0,0,.35);
+--radius:22px;
+}
 
-      /* خلفية جذابة */
-      background:
-        radial-gradient(1200px 800px at 10% 10%, rgba(56,189,248,.55), transparent 60%),
-        radial-gradient(1000px 700px at 90% 20%, rgba(34,197,94,.45), transparent 60%),
-        radial-gradient(900px 700px at 50% 100%, rgba(168,85,247,.25), transparent 55%),
-        linear-gradient(135deg, #060b16, #0b1220);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
+*{box-sizing:border-box}
 
-    /* زخارف بسيطة */
-    .blob{
-      position:fixed;
-      inset:auto;
-      width:420px;
-      height:420px;
-      filter: blur(40px);
-      opacity:.35;
-      z-index:0;
-      border-radius:50%;
-      background: conic-gradient(from 120deg, var(--bg1), var(--bg2), #a855f7, var(--bg1));
-      animation: float 8s ease-in-out infinite;
-    }
-    .blob.one{ left:-120px; top:-120px; }
-    .blob.two{ right:-140px; top:80px; animation-delay:-3s; width:520px; height:520px; }
+body{
+margin:0;
+font-family:"Cairo",Arial;
+min-height:100vh;
+color:var(--text);
 
-    @keyframes float{
-      0%,100%{ transform: translateY(0) translateX(0) scale(1); }
-      50%{ transform: translateY(18px) translateX(10px) scale(1.03); }
-    }
+background:
+radial-gradient(1200px 800px at 10% 10%, rgba(56,189,248,.55), transparent 60%),
+radial-gradient(1000px 700px at 90% 20%, rgba(34,197,94,.45), transparent 60%),
+linear-gradient(135deg,#060b16,#0b1220);
 
-    .wrap{
-      width:min(480px, 100%);
-      position:relative;
-      z-index:1;
-    }
+display:flex;
+align-items:center;
+justify-content:center;
+padding:24px;
+}
 
-    .card{
-      background: var(--card);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(148,163,184,.25);
-      box-shadow: var(--shadow);
-      border-radius: var(--radius);
-      overflow:hidden;
-    }
+.wrap{
+width:min(480px,100%);
+}
 
-    .header{
-      padding:22px 22px 14px;
-      background: linear-gradient(135deg, rgba(56,189,248,.25), rgba(34,197,94,.18));
-      border-bottom:1px solid rgba(148,163,184,.18);
-    }
+.card{
+background:var(--card);
+backdrop-filter:blur(10px);
+border:1px solid rgba(148,163,184,.25);
+box-shadow:var(--shadow);
+border-radius:var(--radius);
+overflow:hidden;
+}
 
-    .badge{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.25);
-      color:var(--muted);
-      font-size:13px;
-      background: rgba(15,23,42,.35);
-    }
+.header{
+padding:22px;
+background:linear-gradient(135deg, rgba(56,189,248,.25), rgba(34,197,94,.18));
+border-bottom:1px solid rgba(148,163,184,.18);
+}
 
-    .title{
-      margin:12px 0 4px;
-      font-size:26px;
-      font-weight:800;
-      letter-spacing:.2px;
-    }
+.title{
+margin:0;
+font-size:26px;
+font-weight:800;
+}
 
-    .subtitle{
-      margin:0;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.7;
-    }
+.content{
+padding:20px;
+}
 
-    .content{ padding:18px 22px 22px; }
+label{
+display:block;
+margin-top:12px;
+margin-bottom:6px;
+color:var(--muted);
+}
 
-    .field{
-      margin-top:14px;
-    }
-    label{
-      display:block;
-      margin-bottom:8px;
-      color:var(--muted);
-      font-size:14px;
-      font-weight:600;
-    }
-    .input{
-      width:100%;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid rgba(148,163,184,.25);
-      background: rgba(2,6,23,.35);
-      color:var(--text);
-      outline:none;
-      font-size:15px;
-      transition:.2s;
-    }
-    .input:focus{
-      border-color: rgba(56,189,248,.7);
-      box-shadow: 0 0 0 4px rgba(56,189,248,.15);
-    }
+.input{
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid rgba(148,163,184,.25);
+background:rgba(2,6,23,.35);
+color:white;
+font-size:15px;
+}
 
-    .row{
-      display:flex;
-      gap:12px;
-      margin-top:16px;
-      flex-wrap:wrap;
-    }
+.row{
+margin-top:16px;
+}
 
-    .btn{
-      flex:1;
-      min-width:150px;
-      cursor:pointer;
-      border:none;
-      padding:12px 14px;
-      border-radius:14px;
-      font-weight:800;
-      font-size:15px;
-      transition:.2s;
-    }
-    .btn.primary{
-      color:#061019;
-      background: linear-gradient(135deg, #38bdf8, #22c55e);
-      box-shadow: 0 14px 30px rgba(34,197,94,.12);
-    }
-    .btn.primary:hover{ transform: translateY(-1px); }
-    .btn.ghost{
-      color:var(--text);
-      background: rgba(148,163,184,.12);
-      border:1px solid rgba(148,163,184,.22);
-    }
+.btn{
+width:100%;
+cursor:pointer;
+border:none;
+padding:12px;
+border-radius:12px;
+font-weight:bold;
+font-size:15px;
 
-    .result{
-      margin-top:16px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px dashed rgba(148,163,184,.35);
-      background: rgba(2,6,23,.25);
-      color: var(--text);
-      line-height:1.8;
-      display:none;
-    }
-    .result.show{ display:block; }
+background:linear-gradient(135deg,#38bdf8,#22c55e);
+}
 
-    .footer{
-      margin-top:10px;
-      text-align:center;
-      color: rgba(203,213,225,.85);
-      font-size:12px;
-    }
-    .small{
-      color: rgba(203,213,225,.75);
-      font-size:12px;
-    }
+.result{
+margin-top:16px;
+padding:12px;
+border-radius:12px;
+border:1px dashed rgba(148,163,184,.35);
+display:none;
+}
 
-    .copy{
-      margin-top:10px;
-      width:100%;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,.22);
-      background: rgba(15,23,42,.35);
-      color: var(--text);
-      cursor:pointer;
-      font-weight:700;
-      display:none;
-    }
-    .copy.show{ display:block; }
-  </style>
+.result.show{
+display:block;
+}
+
+</style>
 </head>
 
 <body>
-  <div class="blob one"></div>
-  <div class="blob two"></div>
 
-  <main class="wrap">
-    <section class="card">
-      <div class="header">
-        <div class="badge">✨ واجهة تجريبية</div>
-        <h1 class="title">فتح حساب جديد</h1>
-        <p class="subtitle">أدخل اسم المستخدم وكلمة السر، ثم اضغط إنشاء حساب لعرض بيانات الحساب.</p>
-      </div>
+<main class="wrap">
 
-      <div class="content">
-        <div class="field">
-          <label for="user">اسم المستخدم</label>
-          <input class="input" type="text" id="user" placeholder="مثال: bebo" autocomplete="username">
-        </div>
+<section class="card">
 
-        <div class="field">
-          <label for="pass">كلمة السر</label>
-          <input class="input" type="password" id="pass" placeholder="••••••••" autocomplete="new-password">
-        </div>
+<div class="header">
+<h1 class="title">فتح حساب جديد</h1>
+</div>
 
-        <div class="row">
-          <button class="btn primary" onclick="createAccount()">إنشاء حساب</button>
-          <button class="btn ghost" onclick="resetForm()">مسح</button>
-        </div>
+<div class="content">
 
-        <div id="result" class="result"></div>
-        <button id="copyBtn" class="copy" onclick="copyResult()">نسخ النتيجة</button>
+<label>اسم المستخدم</label>
+<input class="input" type="text" id="user">
 
-        <div class="footer small">© bank-bebo — تصميم بسيط وجذاب</div>
-      </div>
-    </section>
-  </main>
+<label>كلمة السر</label>
+<input class="input" type="password" id="pass">
 
-  <script>
-    function createAccount(){
-      const user = document.getElementById("user").value.trim();
-      const pass = document.getElementById("pass").value.trim();
-      const result = document.getElementById("result");
-      const copyBtn = document.getElementById("copyBtn");
+<div class="row">
+<button class="btn" onclick="createAccount()">إنشاء حساب</button>
+</div>
 
-      if(!user || !pass){
-        result.classList.add("show");
-        copyBtn.classList.remove("show");
-        result.style.borderColor = "rgba(239,68,68,.55)";
-        result.innerHTML = "⚠️ من فضلك اكتب <b>اسم المستخدم</b> و <b>كلمة السر</b>.";
-        return;
-      }
+<div id="result" class="result"></div>
 
-      // رقم حساب عشوائي (تجريبي)
-      const acc = Math.floor(1000000 + Math.random() * 9000000);
+</div>
 
-      result.style.borderColor = "rgba(148,163,184,.35)";
-      result.classList.add("show");
-      result.innerHTML =
-        "✅ تم إنشاء الحساب بنجاح<br>" +
-        "👤 اسم المستخدم: <b>" + escapeHtml(user) + "</b><br>" +
-        "🔢 رقم الحساب: <b>" + acc + "</b>";
+</section>
 
-      copyBtn.classList.add("show");
-    }
+</main>
 
-    function resetForm(){
-      document.getElementById("user").value = "";
-      document.getElementById("pass").value = "";
-      document.getElementById("result").classList.remove("show");
-      document.getElementById("copyBtn").classList.remove("show");
-    }
+<script>
 
-    function copyResult(){
-      const text = document.getElementById("result").innerText;
-      navigator.clipboard.writeText(text).then(()=> {
-        alert("تم النسخ ✅");
-      }).catch(()=> {
-        alert("ما قدر ينسخ.. جرّب نسخ يدويًا");
-      });
-    }
+function createAccount(){
 
-    function escapeHtml(str){
-      return str.replace(/[&<>"']/g, m => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-  </script>
+const user=document.getElementById("user").value
+const pass=document.getElementById("pass").value
+const result=document.getElementById("result")
+
+if(!user||!pass){
+
+result.classList.add("show")
+result.innerHTML="اكتب اسم المستخدم وكلمة السر"
+return
+
+}
+
+const acc=Math.floor(1000000+Math.random()*9000000)
+
+result.classList.add("show")
+
+result.innerHTML=
+"تم إنشاء الحساب بنجاح<br>"+
+"اسم المستخدم: "+user+"<br>"+
+"رقم الحساب: "+acc
+
+}
+
+</script>
+
 </body>
 </html>
