@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>فتح حساب</title>
+</head>
+
+<body>
+
+<h2>فتح حساب جديد</h2>
+
+<label>اسم المستخدم:</label><br>
+<input type="text" id="user"><br><br>
+
+<label>كلمة السر:</label><br>
+<input type="password" id="pass"><br><br>
+
+<button onclick="create()">فتح حساب</button>
+
+<h3 id="result"></h3>
+
+<script>
+function create(){
+
+let user=document.getElementById("user").value;
+let pass=document.getElementById("pass").value;
+
+let acc=Math.floor(1000000+Math.random()*9000000);
+
+document.getElementById("result").innerHTML=
+"رقم حسابك: "+acc+"<br>اسم المستخدم: "+user;
+
+}
+</script>
+
+</body>
+</html>
