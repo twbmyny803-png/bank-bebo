@@ -8,170 +8,389 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-
 :root{
---bg1:#0ea5e9;
---bg2:#22c55e;
---card:#0b1220cc;
---text:#f8fafc;
---muted:#cbd5e1;
---shadow:0 20px 60px rgba(0,0,0,.35);
---radius:22px;
+  --bg1:#0ea5e9;
+  --bg2:#22c55e;
+  --card:#0b1220cc;
+  --text:#f8fafc;
+  --muted:#cbd5e1;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
+  --radius:22px;
+  --ok:#22c55e;
+  --danger:#ef4444;
 }
 
 *{box-sizing:border-box}
 
 body{
-margin:0;
-font-family:"Cairo",Arial;
-min-height:100vh;
-color:var(--text);
-
-background:
-radial-gradient(1200px 800px at 10% 10%, rgba(56,189,248,.55), transparent 60%),
-radial-gradient(1000px 700px at 90% 20%, rgba(34,197,94,.45), transparent 60%),
-linear-gradient(135deg,#060b16,#0b1220);
-
-display:flex;
-align-items:center;
-justify-content:center;
-padding:24px;
+  margin:0;
+  font-family:"Cairo",Arial;
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 800px at 10% 10%, rgba(56,189,248,.55), transparent 60%),
+    radial-gradient(1000px 700px at 90% 20%, rgba(34,197,94,.45), transparent 60%),
+    linear-gradient(135deg,#060b16,#0b1220);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
 }
 
-.wrap{
-width:min(480px,100%);
-}
+.wrap{ width:min(480px,100%); }
 
 .card{
-background:var(--card);
-backdrop-filter:blur(10px);
-border:1px solid rgba(148,163,184,.25);
-box-shadow:var(--shadow);
-border-radius:var(--radius);
-overflow:hidden;
+  background:var(--card);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(148,163,184,.25);
+  box-shadow:var(--shadow);
+  border-radius:var(--radius);
+  overflow:hidden;
 }
 
 .header{
-padding:22px;
-background:linear-gradient(135deg, rgba(56,189,248,.25), rgba(34,197,94,.18));
-border-bottom:1px solid rgba(148,163,184,.18);
+  padding:22px;
+  background:linear-gradient(135deg, rgba(56,189,248,.25), rgba(34,197,94,.18));
+  border-bottom:1px solid rgba(148,163,184,.18);
 }
 
 .title{
-margin:0;
-font-size:26px;
-font-weight:800;
+  margin:0;
+  font-size:26px;
+  font-weight:800;
 }
 
-.content{
-padding:20px;
-}
+.content{ padding:20px; }
 
 label{
-display:block;
-margin-top:12px;
-margin-bottom:6px;
-color:var(--muted);
+  display:block;
+  margin-top:12px;
+  margin-bottom:6px;
+  color:var(--muted);
+  font-weight:700;
 }
 
 .input{
-width:100%;
-padding:12px;
-border-radius:12px;
-border:1px solid rgba(148,163,184,.25);
-background:rgba(2,6,23,.35);
-color:white;
-font-size:15px;
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.25);
+  background:rgba(2,6,23,.35);
+  color:white;
+  font-size:15px;
+  outline:none;
+}
+.input:focus{
+  border-color: rgba(56,189,248,.7);
+  box-shadow: 0 0 0 4px rgba(56,189,248,.15);
 }
 
-.row{
-margin-top:16px;
-}
+.row{ margin-top:16px; }
 
 .btn{
-width:100%;
-cursor:pointer;
-border:none;
-padding:12px;
-border-radius:12px;
-font-weight:bold;
-font-size:15px;
-
-background:linear-gradient(135deg,#38bdf8,#22c55e);
+  width:100%;
+  cursor:pointer;
+  border:none;
+  padding:12px;
+  border-radius:12px;
+  font-weight:800;
+  font-size:15px;
+  background:linear-gradient(135deg,#38bdf8,#22c55e);
 }
 
-.result{
-margin-top:16px;
-padding:12px;
-border-radius:12px;
-border:1px dashed rgba(148,163,184,.35);
-display:none;
+.hint{
+  margin-top:10px;
+  color:rgba(203,213,225,.75);
+  font-size:12px;
+  line-height:1.6;
 }
 
-.result.show{
-display:block;
+/* ====== النتيجة (الصورة/الكرت) ====== */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:999;
+}
+.overlay.show{ display:flex; }
+
+.modal{
+  width:min(520px, 100%);
+  background:rgba(11,18,32,.92);
+  border:1px solid rgba(148,163,184,.25);
+  border-radius:22px;
+  box-shadow:0 25px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+  transform: translateY(8px);
+  animation: pop .18s ease-out forwards;
+}
+@keyframes pop{
+  to{ transform: translateY(0); }
 }
 
+.modalTop{
+  padding:18px 18px 14px;
+  border-bottom:1px solid rgba(148,163,184,.16);
+  background:linear-gradient(135deg, rgba(34,197,94,.22), rgba(56,189,248,.16));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.okLine{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:18px;
+}
+
+.okIcon{
+  width:36px; height:36px;
+  border-radius:50%;
+  background:rgba(34,197,94,.18);
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(34,197,94,.45);
+}
+
+.closeBtn{
+  cursor:pointer;
+  border:none;
+  background:rgba(148,163,184,.12);
+  color:var(--text);
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:800;
+}
+
+.modalBody{
+  padding:16px 18px 18px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:10px;
+}
+
+.item{
+  padding:12px 12px;
+  border-radius:14px;
+  background:rgba(2,6,23,.35);
+  border:1px solid rgba(148,163,184,.18);
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.k{
+  color:rgba(203,213,225,.85);
+  font-weight:800;
+}
+.v{
+  color:var(--text);
+  font-weight:900;
+  direction:ltr;
+  text-align:left;
+}
+
+.balance{
+  margin-top:12px;
+  padding:14px;
+  border-radius:16px;
+  border:1px dashed rgba(34,197,94,.55);
+  background:rgba(34,197,94,.10);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.balance .k{ color: rgba(203,213,225,.9); }
+.balance .v{ font-size:18px; }
+
+.err{
+  margin-top:12px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(239,68,68,.45);
+  background:rgba(239,68,68,.10);
+  color:rgba(255,255,255,.92);
+  display:none;
+}
+.err.show{ display:block; }
+
+.modalActions{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.actionBtn{
+  flex:1;
+  min-width:140px;
+  cursor:pointer;
+  border:none;
+  padding:11px 12px;
+  border-radius:12px;
+  font-weight:900;
+}
+.actionBtn.copy{
+  background:rgba(148,163,184,.14);
+  color:var(--text);
+  border:1px solid rgba(148,163,184,.22);
+}
+.actionBtn.new{
+  background:linear-gradient(135deg,#38bdf8,#22c55e);
+  color:#061019;
+}
+
+.smallNote{
+  margin-top:10px;
+  color:rgba(203,213,225,.7);
+  font-size:12px;
+}
 </style>
 </head>
 
 <body>
 
 <main class="wrap">
+  <section class="card">
+    <div class="header">
+      <h1 class="title">فتح حساب جديد</h1>
+    </div>
 
-<section class="card">
+    <div class="content">
+      <label>اسم المستخدم</label>
+      <input class="input" type="text" id="user" placeholder="مثال: bebo" autocomplete="username">
 
-<div class="header">
-<h1 class="title">فتح حساب جديد</h1>
-</div>
+      <label>كلمة السر</label>
+      <input class="input" type="password" id="pass" placeholder="••••••••" autocomplete="new-password">
 
-<div class="content">
+      <div class="row">
+        <button class="btn" onclick="createAccount()">إنشاء حساب</button>
+      </div>
 
-<label>اسم المستخدم</label>
-<input class="input" type="text" id="user">
-
-<label>كلمة السر</label>
-<input class="input" type="password" id="pass">
-
-<div class="row">
-<button class="btn" onclick="createAccount()">إنشاء حساب</button>
-</div>
-
-<div id="result" class="result"></div>
-
-</div>
-
-</section>
-
+      <div id="err" class="err"></div>
+      <div class="hint">ملاحظة: هذا نموذج واجهة فقط (تجريبي).</div>
+    </div>
+  </section>
 </main>
 
+<!-- نافذة النتيجة -->
+<div id="overlay" class="overlay" onclick="closeModal(event)">
+  <div class="modal" role="dialog" aria-modal="true" onclick="event.stopPropagation()">
+    <div class="modalTop">
+      <div class="okLine">
+        <div class="okIcon" aria-hidden="true">
+          <!-- علامة صح -->
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M20 6L9 17l-5-5" stroke="rgba(34,197,94,1)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>تم فتح الحساب ✅</div>
+      </div>
+      <button class="closeBtn" onclick="hideOverlay()">إغلاق</button>
+    </div>
+
+    <div class="modalBody">
+      <div class="grid">
+        <div class="item"><div class="k">اسم المستخدم</div><div id="mUser" class="v">-</div></div>
+        <div class="item"><div class="k">كلمة السر</div><div id="mPass" class="v">-</div></div>
+        <div class="item"><div class="k">رقم الحساب</div><div id="mAcc" class="v">-</div></div>
+      </div>
+
+      <div class="balance">
+        <div class="k">الرصيد المبدئي</div>
+        <div id="mBal" class="v">2000</div>
+      </div>
+
+      <div class="modalActions">
+        <button class="actionBtn copy" onclick="copyAll()">نسخ البيانات</button>
+        <button class="actionBtn new" onclick="newAccount()">فتح حساب جديد</button>
+      </div>
+
+      <div class="smallNote">إذا فتحت الصفحة من بعض المتصفحات، النسخ ممكن يحتاج إذن.</div>
+    </div>
+  </div>
+</div>
+
 <script>
-
 function createAccount(){
+  const user = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value.trim();
+  const err  = document.getElementById("err");
 
-const user=document.getElementById("user").value
-const pass=document.getElementById("pass").value
-const result=document.getElementById("result")
+  if(!user || !pass){
+    err.classList.add("show");
+    err.innerHTML = "⚠️ اكتب <b>اسم المستخدم</b> و <b>كلمة السر</b>.";
+    return;
+  }
 
-if(!user||!pass){
+  err.classList.remove("show");
 
-result.classList.add("show")
-result.innerHTML="اكتب اسم المستخدم وكلمة السر"
-return
+  // رقم حساب عشوائي
+  const acc = Math.floor(1000000 + Math.random() * 9000000);
+  const bal = 2000;
 
+  document.getElementById("mUser").textContent = user;
+  document.getElementById("mPass").textContent = pass;
+  document.getElementById("mAcc").textContent  = acc;
+  document.getElementById("mBal").textContent  = bal;
+
+  showOverlay();
 }
 
-const acc=Math.floor(1000000+Math.random()*9000000)
-
-result.classList.add("show")
-
-result.innerHTML=
-"تم إنشاء الحساب بنجاح<br>"+
-"اسم المستخدم: "+user+"<br>"+
-"رقم الحساب: "+acc
-
+function showOverlay(){
+  document.getElementById("overlay").classList.add("show");
 }
 
+function hideOverlay(){
+  document.getElementById("overlay").classList.remove("show");
+}
+
+function closeModal(e){
+  // لو ضغطت برا الكرت يقفل
+  hideOverlay();
+}
+
+function newAccount(){
+  hideOverlay();
+  document.getElementById("user").value = "";
+  document.getElementById("pass").value = "";
+  document.getElementById("err").classList.remove("show");
+  document.getElementById("user").focus();
+}
+
+function copyAll(){
+  const user = document.getElementById("mUser").textContent;
+  const pass = document.getElementById("mPass").textContent;
+  const acc  = document.getElementById("mAcc").textContent;
+  const bal  = document.getElementById("mBal").textContent;
+
+  const text =
+    "تم فتح الحساب ✅\n" +
+    "اسم المستخدم: " + user + "\n" +
+    "كلمة السر: " + pass + "\n" +
+    "رقم الحساب: " + acc + "\n" +
+    "الرصيد المبدئي: " + bal;
+
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("تم النسخ ✅");
+  }).catch(()=>{
+    alert("ما قدر ينسخ.. انسخ يدويًا");
+  });
+}
+
+// قفل بالـ ESC
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") hideOverlay();
+});
 </script>
 
 </body>
