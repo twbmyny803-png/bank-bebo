@@ -110,8 +110,6 @@ label{
   display:block;
 }
 
-/* نافذة النتيجة */
-
 .overlay{
   position:fixed;
   inset:0;
@@ -137,6 +135,7 @@ label{
   margin-top:10px;
   display:flex;
   justify-content:space-between;
+  gap:12px;
 }
 
 .balance{
@@ -148,7 +147,6 @@ label{
   display:flex;
   justify-content:space-between;
 }
-
 </style>
 </head>
 
@@ -171,7 +169,7 @@ label{
 <input class="input" type="password" id="pass">
 
 <div class="row">
-<button class="btn" onclick="createAccount()">إنشاء حساب</button>
+<button class="btn" id="createBtn" onclick="createAccount()">إنشاء حساب</button>
 </div>
 
 <div id="err" class="err"></div>
@@ -183,64 +181,86 @@ label{
 </main>
 
 <div id="overlay" class="overlay">
+  <div class="modal">
+    <h2>✅ تم فتح الحساب</h2>
 
-<div class="modal">
+    <div class="item">
+      <span>اسم المستخدم</span>
+      <span id="mUser"></span>
+    </div>
 
-<h2>✅ تم فتح الحساب</h2>
+    <div class="item">
+      <span>كلمة السر</span>
+      <span id="mPass"></span>
+    </div>
 
-<div class="item">
-<span>اسم المستخدم</span>
-<span id="mUser"></span>
-</div>
+    <div class="item">
+      <span>رقم الحساب</span>
+      <span id="mAcc"></span>
+    </div>
 
-<div class="item">
-<span>كلمة السر</span>
-<span id="mPass"></span>
-</div>
-
-<div class="item">
-<span>رقم الحساب</span>
-<span id="mAcc"></span>
-</div>
-
-<div class="balance">
-<span>الرصيد المبدئي</span>
-<span id="mBal">2000</span>
-</div>
-
-</div>
-
+    <div class="balance">
+      <span>الرصيد المبدئي</span>
+      <span id="mBal">2000</span>
+    </div>
+  </div>
 </div>
 
 <script>
+const API_URL = "https://bank-bebo-ap.onrender.com";
 
-function createAccount(){
+async function createAccount() {
+  const user = document.getElementById("user").value.trim();
+  const pass = document.getElementById("pass").value.trim();
+  const err = document.getElementById("err");
+  const btn = document.getElementById("createBtn");
 
-const user=document.getElementById("user").value.trim()
-const pass=document.getElementById("pass").value.trim()
-const err=document.getElementById("err")
+  if (!user || !pass) {
+    err.classList.add("show");
+    err.innerHTML = "اكتب اسم المستخدم وكلمة السر";
+    return;
+  }
 
-if(!user || !pass){
+  err.classList.remove("show");
+  err.innerHTML = "";
+  btn.disabled = true;
+  btn.textContent = "جاري الإنشاء...";
 
-err.classList.add("show")
-err.innerHTML="اكتب اسم المستخدم وكلمة السر"
-return
+  try {
+    const res = await fetch(API_URL + "/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: user,
+        password: pass
+      })
+    });
 
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      throw new Error(data.error || "فشل إنشاء الحساب");
+    }
+
+    document.getElementById("mUser").textContent = data.user.username;
+    document.getElementById("mPass").textContent = pass;
+    document.getElementById("mAcc").textContent = data.user.member_number;
+    document.getElementById("mBal").textContent = data.user.points;
+
+    document.getElementById("overlay").classList.add("show");
+
+    document.getElementById("user").value = "";
+    document.getElementById("pass").value = "";
+  } catch (e) {
+    err.classList.add("show");
+    err.innerHTML = e.message || "حصل خطأ أثناء إنشاء الحساب";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "إنشاء حساب";
+  }
 }
-
-err.classList.remove("show")
-
-const acc=Math.floor(1000000+Math.random()*9000000)
-
-document.getElementById("mUser").textContent=user
-document.getElementById("mPass").textContent=pass
-document.getElementById("mAcc").textContent=acc
-document.getElementById("mBal").textContent=2000
-
-document.getElementById("overlay").classList.add("show")
-
-}
-
 </script>
 
 </body>
