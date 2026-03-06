@@ -1,293 +1,205 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>فتح حساب</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --bg1:#0ea5e9;
-  --bg2:#22c55e;
-  --card:#0b1220cc;
-  --text:#f8fafc;
-  --muted:#cbd5e1;
-  --shadow:0 20px 60px rgba(0,0,0,.35);
-  --radius:22px;
-}
-
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:"Cairo",Arial,sans-serif;
-  min-height:100vh;
-  color:var(--text);
-  background:
-    radial-gradient(1200px 800px at 10% 10%, rgba(56,189,248,.55), transparent 60%),
-    radial-gradient(1000px 700px at 90% 20%, rgba(34,197,94,.45), transparent 60%),
-    linear-gradient(135deg,#060b16,#0b1220);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-}
-
-.wrap{
-  width:min(480px,100%);
-}
-
-.card{
-  background:var(--card);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(148,163,184,.25);
-  box-shadow:var(--shadow);
-  border-radius:var(--radius);
-  overflow:hidden;
-}
-
-.header{
-  padding:22px;
-  background:linear-gradient(135deg, rgba(56,189,248,.25), rgba(34,197,94,.18));
-  border-bottom:1px solid rgba(148,163,184,.18);
-}
-
-.title{
-  margin:0;
-  font-size:26px;
-  font-weight:800;
-}
-
-.content{
-  padding:20px;
-}
-
-label{
-  display:block;
-  margin-top:12px;
-  margin-bottom:6px;
-  color:var(--muted);
-  font-weight:700;
-}
-
-.input{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid rgba(148,163,184,.25);
-  background:rgba(2,6,23,.35);
-  color:white;
-  font-size:15px;
-  outline:none;
-}
-
-.input:focus{
-  border-color:#38bdf8;
-}
-
-.row{
-  margin-top:16px;
-}
-
-.btn{
-  width:100%;
-  cursor:pointer;
-  border:none;
-  padding:12px;
-  border-radius:12px;
-  font-weight:800;
-  font-size:15px;
-  background:linear-gradient(135deg,#38bdf8,#22c55e);
-  color:#04111d;
-}
-
-.btn:disabled{
-  opacity:.7;
-  cursor:not-allowed;
-}
-
-.err{
-  margin-top:12px;
-  padding:12px;
-  border-radius:12px;
-  border:1px solid rgba(239,68,68,.45);
-  background:rgba(239,68,68,.10);
-  display:none;
-}
-
-.err.show{
-  display:block;
-}
-
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-
-.overlay.show{
-  display:flex;
-}
-
-.modal{
-  width:min(520px,100%);
-  background:rgba(11,18,32,.95);
-  border-radius:20px;
-  padding:20px;
-  border:1px solid rgba(148,163,184,.2);
-}
-
-.item{
-  margin-top:10px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.balance{
-  margin-top:14px;
-  padding:12px;
-  border-radius:14px;
-  border:1px dashed rgba(34,197,94,.55);
-  background:rgba(34,197,94,.10);
-  display:flex;
-  justify-content:space-between;
-}
-
-.close-btn{
-  width:100%;
-  margin-top:18px;
-  cursor:pointer;
-  border:none;
-  padding:12px;
-  border-radius:12px;
-  font-weight:800;
-  font-size:15px;
-  background:#1e293b;
-  color:#fff;
-}
-</style>
-</head>
-
-<body>
-
-<main class="wrap">
-  <section class="card">
-    <div class="header">
-      <h1 class="title">فتح حساب جديد</h1>
-    </div>
-
-    <div class="content">
-      <label>اسم المستخدم</label>
-      <input class="input" type="text" id="user">
-
-      <label>كلمة السر</label>
-      <input class="input" type="password" id="pass">
-
-      <div class="row">
-        <button class="btn" id="createBtn" onclick="createAccount()">إنشاء حساب</button>
-      </div>
-
-      <div id="err" class="err"></div>
-    </div>
-  </section>
-</main>
-
-<div id="overlay" class="overlay">
-  <div class="modal">
-    <h2>✅ تم فتح الحساب</h2>
-
-    <div class="item">
-      <span>اسم المستخدم</span>
-      <span id="mUser"></span>
-    </div>
-
-    <div class="item">
-      <span>كلمة السر</span>
-      <span id="mPass"></span>
-    </div>
-
-    <div class="item">
-      <span>رقم الحساب</span>
-      <span id="mAcc"></span>
-    </div>
-
-    <div class="balance">
-      <span>الرصيد المبدئي</span>
-      <span id="mBal">2000</span>
-    </div>
-
-    <button class="close-btn" onclick="closeModal()">إغلاق</button>
-  </div>
-</div>
-
-<script>
-const API_URL = "https://bank-bebo-ap.onrender.com";
-
-async function createAccount() {
-  const user = document.getElementById("user").value.trim();
-  const pass = document.getElementById("pass").value.trim();
-  const err = document.getElementById("err");
-  const btn = document.getElementById("createBtn");
-
-  if (!user || !pass) {
-    err.classList.add("show");
-    err.innerHTML = "اكتب اسم المستخدم وكلمة السر";
-    return;
-  }
-
-  err.classList.remove("show");
-  err.innerHTML = "";
-  btn.disabled = true;
-  btn.textContent = "جاري الإنشاء...";
-
-  try {
-    const res = await fetch(API_URL + "/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        username: user,
-        password: pass
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.ok) {
-      throw new Error(data.error || "فشل إنشاء الحساب");
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة الأدمن</title>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#000;
+      color:#fff;
+      text-align:center;
+      padding:40px 20px;
     }
 
-    document.getElementById("mUser").textContent = data.user.username;
-    document.getElementById("mPass").textContent = pass;
-    document.getElementById("mAcc").textContent = data.user.member_number;
-    document.getElementById("mBal").textContent = data.user.points;
+    h1{
+      margin-bottom:25px;
+    }
 
-    document.getElementById("overlay").classList.add("show");
+    input{
+      width:280px;
+      max-width:90%;
+      padding:12px;
+      font-size:18px;
+      border:none;
+      border-radius:6px;
+      margin-bottom:15px;
+    }
 
-    document.getElementById("user").value = "";
-    document.getElementById("pass").value = "";
-  } catch (e) {
-    err.classList.add("show");
-    err.innerHTML = e.message || "حصل خطأ أثناء إنشاء الحساب";
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "إنشاء حساب";
-  }
-}
+    button{
+      padding:12px 18px;
+      border:none;
+      border-radius:6px;
+      background:red;
+      color:#fff;
+      font-size:16px;
+      cursor:pointer;
+      margin:5px;
+    }
 
-function closeModal() {
-  document.getElementById("overlay").classList.remove("show");
-}
-</script>
+    .box{
+      margin:30px auto 0;
+      max-width:420px;
+      background:#111;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:20px;
+      display:none;
+      text-align:right;
+    }
+
+    .row{
+      margin:10px 0;
+      font-size:18px;
+      word-break:break-word;
+    }
+
+    .actions{
+      margin-top:20px;
+      text-align:center;
+    }
+
+    .msg{
+      margin-top:20px;
+      color:#ffd;
+      font-size:16px;
+      min-height:24px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>لوحة التحكم</h1>
+
+  <input id="memberNumber" type="text" placeholder="ابحث برقم الحساب" />
+  <br />
+  <button onclick="searchUser()">بحث</button>
+
+  <div id="msg" class="msg"></div>
+
+  <div id="result" class="box">
+    <div class="row"><strong>رقم الحساب:</strong> <span id="rMember"></span></div>
+    <div class="row"><strong>اسم المستخدم:</strong> <span id="rUsername"></span></div>
+    <div class="row"><strong>الرصيد:</strong> <span id="rPoints"></span></div>
+    <div class="row"><strong>الحالة:</strong> <span id="rStatus"></span></div>
+
+    <div class="actions">
+      <button onclick="changeStatus('active')">تفعيل</button>
+      <button onclick="changeStatus('banned')">حظر</button>
+      <button onclick="changeStatus('frozen')">تجميد</button>
+      <button onclick="changePoints(100)">+100</button>
+      <button onclick="changePoints(-100)">-100</button>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://bank-bebo-ap.onrender.com";
+    let currentMember = "";
+
+    function setMsg(text) {
+      document.getElementById("msg").textContent = text;
+    }
+
+    async function searchUser() {
+      const memberNumber = document.getElementById("memberNumber").value.trim();
+      const resultBox = document.getElementById("result");
+
+      if (!memberNumber) {
+        setMsg("اكتب رقم الحساب أولًا");
+        resultBox.style.display = "none";
+        return;
+      }
+
+      setMsg("جاري البحث...");
+      resultBox.style.display = "none";
+
+      try {
+        const res = await fetch(API + "/user/" + memberNumber);
+        const data = await res.json();
+
+        if (!data.ok || !data.user) {
+          setMsg("الحساب غير موجود");
+          return;
+        }
+
+        currentMember = data.user.member_number;
+
+        document.getElementById("rMember").textContent = data.user.member_number;
+        document.getElementById("rUsername").textContent = data.user.username;
+        document.getElementById("rPoints").textContent = data.user.points;
+        document.getElementById("rStatus").textContent = data.user.status;
+
+        resultBox.style.display = "block";
+        setMsg("تم العثور على الحساب");
+      } catch (e) {
+        setMsg("حصل خطأ في الاتصال");
+      }
+    }
+
+    async function changeStatus(status) {
+      if (!currentMember) {
+        setMsg("ابحث عن حساب أولًا");
+        return;
+      }
+
+      setMsg("جاري تحديث الحالة...");
+
+      try {
+        const res = await fetch(API + "/user/" + currentMember + "/status", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ status })
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+          setMsg(data.error || "فشل تحديث الحالة");
+          return;
+        }
+
+        await searchUser();
+        setMsg("تم تحديث الحالة بنجاح");
+      } catch (e) {
+        setMsg("حصل خطأ أثناء تحديث الحالة");
+      }
+    }
+
+    async function changePoints(amount) {
+      if (!currentMember) {
+        setMsg("ابحث عن حساب أولًا");
+        return;
+      }
+
+      setMsg("جاري تعديل الرصيد...");
+
+      try {
+        const res = await fetch(API + "/user/" + currentMember + "/points", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ amount })
+        });
+
+        const data = await res.json();
+
+        if (!data.ok) {
+          setMsg(data.error || "فشل تعديل الرصيد");
+          return;
+        }
+
+        await searchUser();
+        setMsg("تم تعديل الرصيد بنجاح");
+      } catch (e) {
+        setMsg("حصل خطأ أثناء تعديل الرصيد");
+      }
+    }
+  </script>
 
 </body>
 </html>
