@@ -22,7 +22,7 @@
 
 body{
   margin:0;
-  font-family:"Cairo",Arial;
+  font-family:"Cairo",Arial,sans-serif;
   min-height:100vh;
   color:var(--text);
   background:
@@ -80,6 +80,11 @@ label{
   background:rgba(2,6,23,.35);
   color:white;
   font-size:15px;
+  outline:none;
+}
+
+.input:focus{
+  border-color:#38bdf8;
 }
 
 .row{
@@ -95,6 +100,12 @@ label{
   font-weight:800;
   font-size:15px;
   background:linear-gradient(135deg,#38bdf8,#22c55e);
+  color:#04111d;
+}
+
+.btn:disabled{
+  opacity:.7;
+  cursor:not-allowed;
 }
 
 .err{
@@ -126,9 +137,10 @@ label{
 
 .modal{
   width:min(520px,100%);
-  background:rgba(11,18,32,.92);
+  background:rgba(11,18,32,.95);
   border-radius:20px;
   padding:20px;
+  border:1px solid rgba(148,163,184,.2);
 }
 
 .item{
@@ -136,6 +148,7 @@ label{
   display:flex;
   justify-content:space-between;
   gap:12px;
+  flex-wrap:wrap;
 }
 
 .balance{
@@ -147,37 +160,44 @@ label{
   display:flex;
   justify-content:space-between;
 }
+
+.close-btn{
+  width:100%;
+  margin-top:18px;
+  cursor:pointer;
+  border:none;
+  padding:12px;
+  border-radius:12px;
+  font-weight:800;
+  font-size:15px;
+  background:#1e293b;
+  color:#fff;
+}
 </style>
 </head>
 
 <body>
 
 <main class="wrap">
+  <section class="card">
+    <div class="header">
+      <h1 class="title">فتح حساب جديد</h1>
+    </div>
 
-<section class="card">
+    <div class="content">
+      <label>اسم المستخدم</label>
+      <input class="input" type="text" id="user">
 
-<div class="header">
-<h1 class="title">فتح حساب جديد</h1>
-</div>
+      <label>كلمة السر</label>
+      <input class="input" type="password" id="pass">
 
-<div class="content">
+      <div class="row">
+        <button class="btn" id="createBtn" onclick="createAccount()">إنشاء حساب</button>
+      </div>
 
-<label>اسم المستخدم</label>
-<input class="input" type="text" id="user">
-
-<label>كلمة السر</label>
-<input class="input" type="password" id="pass">
-
-<div class="row">
-<button class="btn" id="createBtn" onclick="createAccount()">إنشاء حساب</button>
-</div>
-
-<div id="err" class="err"></div>
-
-</div>
-
-</section>
-
+      <div id="err" class="err"></div>
+    </div>
+  </section>
 </main>
 
 <div id="overlay" class="overlay">
@@ -203,6 +223,8 @@ label{
       <span>الرصيد المبدئي</span>
       <span id="mBal">2000</span>
     </div>
+
+    <button class="close-btn" onclick="closeModal()">إغلاق</button>
   </div>
 </div>
 
@@ -260,6 +282,10 @@ async function createAccount() {
     btn.disabled = false;
     btn.textContent = "إنشاء حساب";
   }
+}
+
+function closeModal() {
+  document.getElementById("overlay").classList.remove("show");
 }
 </script>
 
